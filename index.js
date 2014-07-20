@@ -18,7 +18,7 @@ module.exports = function (sandbox, fn, options) {
         });
 
         fn(false, function () {
-            sandbox.remove('.search-ui');
+            $('.search-ui', sandbox).remove();
         });
     });
 };
