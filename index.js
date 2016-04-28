@@ -52,7 +52,7 @@ module.exports = function (sandbox, fn, options) {
         });
 
         fn(false, function () {
-            $('.search-ui', sandbox).remove();
+            $('.auto-search', sandbox).remove();
         });
     });
 };
