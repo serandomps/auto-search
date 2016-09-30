@@ -1,111 +1,139 @@
 <div id="serand-auto-search" class="auto-search panel-group" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
         <div class="panel-heading" role="tab">
-            <h3 class="panel-title"><a role="button" data-toggle="collapse"
-                                       href="#serand-auto-search-one" aria-expanded="true" aria-controls="collapseOne">Search</a>
-            </h3>
+            <h3 class="panel-title">Search</h3>
         </div>
-        <div id="serand-auto-search-one" class="panel-collapse collapse in" role="tabpanel"
-             aria-labelledby="headingOne">
-            <div class="panel-body">
-                <form role="form">
-                    <div class="form-group">
-                        <label>Make</label>
-                        <select class="form-control make">
-                            <option value="">All Makes</option>
-                            <option>Honda</option>
-                            <option>Toyota</option>
-                            <option>Mazda</option>
-                            <option>Nissan</option>
-                            <option>Suzzuki</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Model</label>
-                        <select class="form-control model">
-                            <option value="">All Models</option>
-                            <option>Vezel</option>
-                            <option>Insight</option>
-                            <option>Fit</option>
-                            <option>Civic</option>
-                            <option>CR-V</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Keyword (Optional)">
-                    </div>
-                    <div class="form-group price">
-                        <label>Price</label>
+        <div class="panel-body">
+            <form>
+                <div class="form-group">
+                    <label>Make</label>
+                    <select class="form-control make" data-name="make">
+                        <option value="">All Makes</option>
+                        <option>Honda</option>
+                        <option>Toyota</option>
+                        <option>Mazda</option>
+                        <option>Nissan</option>
+                        <option>Suzzuki</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Model</label>
+                    <select class="form-control model" data-name="model">
+                        <option value="">All Models</option>
+                        <option>Vezel</option>
+                        <option>Insight</option>
+                        <option>Fit</option>
+                        <option>Civic</option>
+                        <option>CR-V</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control query" data-name="query" placeholder="Keyword (Optional)">
+                </div>
+                <div class="form-group price">
+                    <label>Price</label>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Low">
-                            </div>
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="High">
-                            </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" data-name="price:gte" placeholder="Low">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" data-name="price:lte" placeholder="High">
                         </div>
                     </div>
-                    <div class="form-group price">
-                        <label>Year</label>
+                </div>
+                <div class="form-group year">
+                    <label>Year</label>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="From">
-                            </div>
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="To">
-                            </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" data-name="year:gte" placeholder="From">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" data-name="year:lte" placeholder="To">
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>Condition</label>
-
+                </div>
+                <div class="form-group condition">
+                    <label>Condition</label>
+                    <div class="checkbox">
                         <div class="options">
-                            <label class="checkbox">
-                                <input type="checkbox" value="option1">Brand New
-                            </label>
-                            <label class="checkbox">
-                                <input type="checkbox" value="option2">Unregistered
-                            </label>
-                            <label class="checkbox">
-                                <input type="checkbox" value="option3">Used
+                            <label>
+                                <input type="checkbox" data-name="condition" value="brand-new">Brand New
                             </label>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>Transmission</label>
-
+                    <div class="checkbox">
                         <div class="options">
-                            <label class="checkbox">
-                                <input type="checkbox" value="option1">Automatic
-                            </label>
-                            <label class="checkbox">
-                                <input type="checkbox" value="option2">Manual
-                            </label>
-                            <label class="checkbox">
-                                <input type="checkbox" value="option3">Manumatic
+                            <label>
+                                <input type="checkbox" data-name="condition" value="unregistered">Unregistered
                             </label>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>Fuel</label>
-
+                    <div class="checkbox">
                         <div class="options">
-                            <label class="checkbox">
-                                <input type="checkbox" value="option1">Petrol
-                            </label>
-                            <label class="checkbox">
-                                <input type="checkbox" value="option2">Diesel
-                            </label>
-                            <label class="checkbox">
-                                <input type="checkbox" value="option3">Hybrid
+                            <label>
+                                <input type="checkbox" data-name="condition" value="used">Used
                             </label>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-default search">Search</button>
-                </form>
-            </div>
+                </div>
+                <div class="form-group transmission">
+                    <label>Transmission</label>
+                    <div class="checkbox">
+                        <div class="options">
+                            <label>
+                                <input type="checkbox" data-name="transmission" value="automatic">Automatic
+                            </label>
+                        </div>
+                    </div>
+                    <div class="checkbox">
+                        <div class="options">
+                            <label>
+                                <input type="checkbox" data-name="transmission" value="manual">Manual
+                            </label>
+                        </div>
+                    </div>
+                    <div class="checkbox">
+                        <div class="options">
+                            <label>
+                                <input type="checkbox" data-name="transmission" value="manumatic">Manumatic
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group fuel">
+                    <label>Fuel</label>
+                    <div class="checkbox">
+                        <div class="options">
+                            <label>
+                                <input type="checkbox" data-name="fuel" value="petrol">Petrol
+                            </label>
+                        </div>
+                    </div>
+                    <div class="checkbox">
+                        <div class="options">
+                            <label>
+                                <input type="checkbox" data-name="fuel" value="diesel">Diesel
+                            </label>
+                        </div>
+                    </div>
+                    <div class="checkbox">
+                        <div class="options">
+                            <label>
+                                <input type="checkbox" data-name="fuel" value="hybrid">Hybrid
+                            </label>
+                        </div>
+                    </div>
+                    <div class="checkbox">
+                        <div class="options">
+                            <label>
+                                <input type="checkbox" data-name="fuel" value="electric">Electric
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
