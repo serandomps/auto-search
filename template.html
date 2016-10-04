@@ -9,22 +9,15 @@
                     <label>Make</label>
                     <select class="form-control make" data-name="make">
                         <option value="">All Makes</option>
-                        <option>Honda</option>
-                        <option>Toyota</option>
-                        <option>Mazda</option>
-                        <option>Nissan</option>
-                        <option>Suzzuki</option>
+                        {#_.makes}
+                        <option value="{id}">{title}</option>
+                        {/_.makes}
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Model</label>
                     <select class="form-control model" data-name="model">
-                        <option value="">All Models</option>
-                        <option>Vezel</option>
-                        <option>Insight</option>
-                        <option>Fit</option>
-                        <option>Civic</option>
-                        <option>CR-V</option>
+                        <option value="">Any Model</option>
                     </select>
                 </div>
                 <div class="form-group">
