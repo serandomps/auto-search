@@ -9,6 +9,8 @@
     "dependencies": {
         "serandomps/dust": "master",
         "serandomps/serand": "master",
-        "serandomps/utils": "master"
+        "serandomps/utils": "master",
+        "serandomps/vehicle-make-service": "master",
+        "serandomps/vehicle-model-service": "master"
     }
 }

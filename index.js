@@ -1,10 +1,10 @@
 var dust = require('dust')();
 var serand = require('serand');
 var utils = require('utils');
+var Make = require('vehicle-make-service');
+var Model = require('vehicle-model-service');
 
 dust.loadSource(dust.compile(require('./template'), 'auto-search'));
-
-var makes;
 
 var query = function (options) {
     var name;
@@ -32,6 +32,7 @@ var query = function (options) {
 };
 
 var select = function (el, val) {
+    el = $('select', el);
     return val ? el.val(val) : el;
 };
 
@@ -68,58 +69,10 @@ var update = function (elem, options) {
     }
 };
 
-var findMakes = function (done) {
-    if (makes) {
-        return done(null, makes);
-    }
-    $.ajax({
-        url: utils.resolve('autos://apis/v/vehicle-makes'),
-        dataType: 'json',
-        success: function (data) {
-            makes = data;
-            done(null, makes);
-        },
-        error: done
-    });
-}
-
-var findModels = function (make, done) {
-    if (!make) {
-        return done(null, []);
-    }
-    var i;
-    var o;
-    for (i = 0; i < makes.length; i++) {
-        if (makes[i].id === make) {
-            o = makes[i];
-            break;
-        }
-    }
-    if (o.models) {
-        return done(null, o.models);
-    }
-    var data = JSON.stringify({
-        criteria: {
-            make: make
-        }
-    });
-    $.ajax({
-        url: utils.resolve('autos://apis/v/vehicle-models'),
-        dataType: 'json',
-        data: {
-            data: data
-        },
-        success: function (data) {
-            o.models = data;
-            done(null, data);
-        },
-        error: done
-    });
-};
-
 var updateModels = function (elem, options) {
+    var el = $('.model', elem);
     if (!options.make) {
-        $('.model', elem).selecter({
+        select(el).selecter({
             callback: function (val) {
                 options.model = val;
                 search(options);
@@ -127,19 +80,19 @@ var updateModels = function (elem, options) {
         });
         return;
     }
-    findModels(options.make, function (err, models) {
+    Model.find(options.make, function (err, models) {
         if (err) {
             return;
         }
-        var html = '<option value="">All Models</option>';
+        var html = '<option value="">Any Model</option>';
         var i;
         var model;
         for (i = 0; i < models.length; i++) {
             model = models[i];
             html += '<option value="' + model.id + '">' + model.title + '</option>';
         }
-        model = $('.model', elem).html(html);
-        select(model, options.model || '').selecter('destroy').selecter({
+        select(el).html(html);
+        select(el, options.model || '').selecter('destroy').selecter({
             callback: function (val) {
                 options.model = val;
                 search(options);
@@ -151,7 +104,7 @@ var updateModels = function (elem, options) {
 module.exports = function (sandbox, fn, options) {
     options = options || {};
     var _ = options._ || (options._ = {});
-    findMakes(function (err, makes) {
+    Make.find(function (err, makes) {
         if (err) {
             return;
         }
