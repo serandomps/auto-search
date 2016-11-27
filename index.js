@@ -4,7 +4,7 @@ var utils = require('utils');
 var Make = require('vehicle-make-service');
 var Model = require('vehicle-model-service');
 
-dust.loadSource(dust.compile(require('./template'), 'auto-search'));
+dust.loadSource(dust.compile(require('./template'), 'autos-search'));
 
 var query = function (options) {
     var name;
@@ -109,7 +109,7 @@ module.exports = function (sandbox, fn, options) {
             return;
         }
         _.makes = makes;
-        dust.render('auto-search', options, function (err, out) {
+        dust.render('autos-search', options, function (err, out) {
             if (err) {
                 return;
             }
@@ -165,7 +165,7 @@ module.exports = function (sandbox, fn, options) {
             });
 
             fn(false, function () {
-                $('.auto-search', sandbox).remove();
+                $('.autos-search', sandbox).remove();
             });
         });
     });

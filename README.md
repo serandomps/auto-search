@@ -1,2 +1,2 @@
-auto-search
+autos-search
 ===========

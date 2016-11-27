@@ -1,6 +1,6 @@
 {
-    "name": "auto-search",
-    "description": "auto-search component",
+    "name": "autos-search",
+    "description": "autos-search component",
     "local": [],
     "scripts": ["index.js"],
     "styles": ["styles.css"],
