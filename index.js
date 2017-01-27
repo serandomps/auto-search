@@ -1,10 +1,10 @@
 var dust = require('dust')();
 var serand = require('serand');
 var utils = require('utils');
-var Make = require('vehicle-make-service');
-var Model = require('vehicle-model-service');
+var Make = require('vehicle-makes-service');
+var Model = require('vehicle-models-service');
 
-dust.loadSource(dust.compile(require('./template'), 'autos-search'));
+dust.loadSource(dust.compile(require('./template'), 'vehicles-search'));
 
 var query = function (options) {
     var name;
@@ -109,7 +109,7 @@ module.exports = function (sandbox, fn, options) {
             return;
         }
         _.makes = makes;
-        dust.render('autos-search', options, function (err, out) {
+        dust.render('vehicles-search', options, function (err, out) {
             if (err) {
                 return;
             }
@@ -165,7 +165,7 @@ module.exports = function (sandbox, fn, options) {
             });
 
             fn(false, function () {
-                $('.autos-search', sandbox).remove();
+                $('.vehicles-search', sandbox).remove();
             });
         });
     });

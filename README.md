@@ -1,2 +1,2 @@
-autos-search
+vehicles-search
 ===========

@@ -1,18 +1,18 @@
-/*.autos-search .price {
+/*.vehicles-search .price {
     margin-bottom: 10px;
     margin-top: 6px;
 }*/
 
-.autos-search .price label {
+.vehicles-search .price label {
     margin-bottom: 4px;
 }
 /*
-.autos-search .search {
+.vehicles-search .search {
     width: 100%;
     margin: 6px 0;
 }*/
 
-.autos-search .form-control {
+.vehicles-search .form-control {
     margin-bottom: 10px;
 }
 
