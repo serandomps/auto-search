@@ -1,6 +1,7 @@
 var dust = require('dust')();
 var serand = require('serand');
 var utils = require('utils');
+var form = require('form');
 var Make = require('vehicle-makes-service');
 var Model = require('vehicle-models-service');
 
@@ -72,11 +73,9 @@ var update = function (elem, options) {
 var updateModels = function (elem, options) {
     var el = $('.model', elem);
     if (!options.make) {
-        select(el).selecter({
-            callback: function (val) {
-                options.model = val;
-                search(options);
-            }
+        form.selectize($('select', el)).on('change', function (val) {
+            options.model = val;
+            search(options);
         });
         return;
     }
@@ -91,12 +90,10 @@ var updateModels = function (elem, options) {
             model = models[i];
             html += '<option value="' + model.id + '">' + model.title + '</option>';
         }
-        select(el).html(html);
-        select(el, options.model || '').selecter('destroy').selecter({
-            callback: function (val) {
-                options.model = val;
-                search(options);
-            }
+        var select = $('select', el).html(html).val(options.model || '');
+        form.selectize(select).on('change', function (val) {
+            options.model = val;
+            search(options);
         });
     });
 };
@@ -106,24 +103,22 @@ module.exports = function (sandbox, fn, options) {
     var _ = options._ || (options._ = {});
     Make.find(function (err, makes) {
         if (err) {
-            return;
+            return fn(err);
         }
         _.makes = makes;
         dust.render('vehicles-search', options, function (err, out) {
             if (err) {
-                return;
+                return fn(err);
             }
 
             var elem = sandbox.append(out);
             update(elem, options);
-
-            select($('.make', elem), options.make).selecter({
-                callback: function (val) {
-                    options.make = val;
-                    options.model = null;
-                    updateModels(elem, options);
-                    search(options);
-                }
+            var select = $('.make', elem).find('select').val(options.make);
+            form.selectize(select).on('change', function (val) {
+                options.make = val;
+                options.model = null;
+                updateModels(elem, options);
+                search(options);
             });
 
             updateModels(elem, options);
@@ -164,7 +159,7 @@ module.exports = function (sandbox, fn, options) {
                 search(options);
             });
 
-            fn(false, function () {
+            fn(null, function () {
                 $('.vehicles-search', sandbox).remove();
             });
         });
