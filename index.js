@@ -81,7 +81,7 @@ var updateModels = function (elem, options) {
     }
     Model.find(options.make, function (err, models) {
         if (err) {
-            return;
+            return console.error(err);
         }
         var html = '<option value="">Any Model</option>';
         var i;
@@ -98,17 +98,17 @@ var updateModels = function (elem, options) {
     });
 };
 
-module.exports = function (sandbox, fn, options) {
+module.exports = function (sandbox, options, done) {
     options = options || {};
     var _ = options._ || (options._ = {});
     Make.find(function (err, makes) {
         if (err) {
-            return fn(err);
+            return done(err);
         }
         _.makes = makes;
         dust.render('vehicles-search', options, function (err, out) {
             if (err) {
-                return fn(err);
+                return done(err);
             }
 
             var elem = sandbox.append(out);
@@ -159,7 +159,7 @@ module.exports = function (sandbox, fn, options) {
                 search(options);
             });
 
-            fn(null, function () {
+            done(null, function () {
                 $('.vehicles-search', sandbox).remove();
             });
         });
