@@ -38,7 +38,7 @@ var select = function (el, val) {
 };
 
 var search = function (selections) {
-    serand.redirect('/vehicles' + query(selections));
+    serand.direct('/vehicles' + query(selections));
 };
 
 var update = function (elem, options) {
@@ -98,7 +98,7 @@ var updateModels = function (elem, options) {
     });
 };
 
-module.exports = function (sandbox, options, done) {
+module.exports = function (ctx, sandbox, options, done) {
     options = options || {};
     var _ = options._ || (options._ = {});
     Make.find(function (err, makes) {
