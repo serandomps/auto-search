@@ -98,7 +98,8 @@ var updateModels = function (elem, options) {
     });
 };
 
-module.exports = function (ctx, sandbox, options, done) {
+module.exports = function (ctx, container, options, done) {
+    var sandbox = container.sandbox;
     options = options || {};
     var _ = options._ || (options._ = {});
     Make.find(function (err, makes) {
