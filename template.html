@@ -1,131 +1,24 @@
 <div id="serand-vehicles-search" class="vehicles-search panel-group" role="tablist" aria-multiselectable="true">
-    <div class="panel panel-default">
-        <div class="panel-heading" role="tab">
-            <h3 class="panel-title">Search</h3>
-        </div>
-        <div class="panel-body">
+    <div class="card">
+        <div class="card-header" role="tab">Search</div>
+        <div class="card-body">
             <form>
-                <div class="form-group make">
-                    <label>Make</label>
-                    <select class="form-control" data-name="make">
-                        <option value="">All Makes</option>
-                        {#_.makes}
-                        <option value="{id}">{title}</option>
-                        {/_.makes}
-                    </select>
-                </div>
-                <div class="form-group model">
-                    <label>Model</label>
-                    <select class="form-control" data-name="model">
-                        <option value="">Any Model</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control query" data-name="query" placeholder="Keyword (Optional)">
-                </div>
+                {@blocks block="select" id=id name="type" label="Type" value=type options=_.types/}
+                {@blocks block="select" id=id name="make" label="Make" value=make options=_.makes/}
+                {@blocks block="select" id=id name="model" label="Model" value=model options=_.models/}
                 <div class="form-group price">
                     <label>Price</label>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <input type="text" class="form-control" data-name="price:gte" placeholder="Low">
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" class="form-control" data-name="price:lte" placeholder="High">
-                        </div>
-                    </div>
+                    {@blocks block="text" id=id name="price-gte" help="Min"/}
+                    {@blocks block="text" id=id name="price-lte" help="Max"/}
                 </div>
                 <div class="form-group year">
                     <label>Year</label>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <input type="text" class="form-control" data-name="year:gte" placeholder="From">
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" class="form-control" data-name="year:lte" placeholder="To">
-                        </div>
-                    </div>
+                    {@blocks block="text" id=id name="manufacturedAt-gte" help="From" value=query/}
+                    {@blocks block="text" id=id name="manufacturedAt-lte" help="To" value=query/}
                 </div>
-                <div class="form-group condition">
-                    <label>Condition</label>
-                    <div class="checkbox">
-                        <div class="options">
-                            <label>
-                                <input type="checkbox" data-name="condition" value="brand-new">Brand New
-                            </label>
-                        </div>
-                    </div>
-                    <div class="checkbox">
-                        <div class="options">
-                            <label>
-                                <input type="checkbox" data-name="condition" value="unregistered">Unregistered
-                            </label>
-                        </div>
-                    </div>
-                    <div class="checkbox">
-                        <div class="options">
-                            <label>
-                                <input type="checkbox" data-name="condition" value="used">Used
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group transmission">
-                    <label>Transmission</label>
-                    <div class="checkbox">
-                        <div class="options">
-                            <label>
-                                <input type="checkbox" data-name="transmission" value="automatic">Automatic
-                            </label>
-                        </div>
-                    </div>
-                    <div class="checkbox">
-                        <div class="options">
-                            <label>
-                                <input type="checkbox" data-name="transmission" value="manual">Manual
-                            </label>
-                        </div>
-                    </div>
-                    <div class="checkbox">
-                        <div class="options">
-                            <label>
-                                <input type="checkbox" data-name="transmission" value="manumatic">Manumatic
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group fuel">
-                    <label>Fuel</label>
-                    <div class="checkbox">
-                        <div class="options">
-                            <label>
-                                <input type="checkbox" data-name="fuel" value="petrol">Petrol
-                            </label>
-                        </div>
-                    </div>
-                    <div class="checkbox">
-                        <div class="options">
-                            <label>
-                                <input type="checkbox" data-name="fuel" value="diesel">Diesel
-                            </label>
-                        </div>
-                    </div>
-                    <div class="checkbox">
-                        <div class="options">
-                            <label>
-                                <input type="checkbox" data-name="fuel" value="hybrid">Hybrid
-                            </label>
-                        </div>
-                    </div>
-                    <div class="checkbox">
-                        <div class="options">
-                            <label>
-                                <input type="checkbox" data-name="fuel" value="electric">Electric
-                            </label>
-                        </div>
-                    </div>
-                </div>
+                {@blocks block="checkboxes" id=id name="condition" value=condition options=_.conditions label="Condition"/}
+                {@blocks block="checkboxes" id=id name="transmission" value=transmission options=_.transmissions label="Transmission"/}
+                {@blocks block="checkboxes" id=id name="fuel" value=fuel options=_.fuels label="Fuel"/}
             </form>
         </div>
     </div>

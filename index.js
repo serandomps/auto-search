@@ -1,17 +1,17 @@
 var dust = require('dust')();
 var serand = require('serand');
-var utils = require('utils');
 var form = require('form');
 var Make = require('vehicle-makes-service');
 var Model = require('vehicle-models-service');
 
 dust.loadSource(dust.compile(require('./template'), 'vehicles-search'));
 
-var query = function (options) {
+var toQuery = function (options) {
     var name;
     var value;
     var q = '';
     var i;
+    options = to(options);
     for (name in options) {
         if (!options.hasOwnProperty(name)) {
             continue;
@@ -32,136 +32,382 @@ var query = function (options) {
     return q ? '?' + q : '';
 };
 
-var select = function (el, val) {
-    el = $('select', el);
-    return val ? el.val(val) : el;
+var to = function (o) {
+    var oo = {};
+    Object.keys(o).forEach(function (name) {
+        oo[name.replace(/-/g, ':')] = o[name];
+    });
+    return oo;
 };
 
-var search = function (selections) {
-    serand.direct('/vehicles' + query(selections));
+var from = function (o) {
+    var oo = {};
+    Object.keys(o).forEach(function (name) {
+        oo[name.replace(/:/g, '-')] = o[name];
+    });
+    return oo;
 };
 
-var update = function (elem, options) {
-    var name;
-    var value;
-    var checkboxes = ['transmission', 'condition', 'fuel'];
-    var i;
-    var length = checkboxes.length;
-    for (i = 0; i < length; i++) {
-        name = checkboxes[i];
-        $('.' + name, elem).find('input[type=checkbox]').prop('checked', false);
-    }
-    for (name in options) {
-        if (!options.hasOwnProperty(name)) {
-            continue;
-        }
-        if (name === 'make' || name === 'model') {
-            continue;
-        }
-        value = options[name];
-        if (checkboxes.indexOf(name) !== -1) {
-            value = value instanceof Array ? value : [value];
-            for (i = 0; i < value.length; i++) {
-                $('.' + name, elem).find('input[type=checkbox][value=' + value[i] + ']').prop('checked', true);
-            }
-            continue;
-        }
-        $('[data-name="' + name + '"]', elem).val(value);
-    }
-};
-
-var updateModels = function (elem, options) {
-    var el = $('.model', elem);
-    if (!options.make) {
-        form.selectize($('select', el)).on('change', function (val) {
-            options.model = val;
-            search(options);
-        });
-        return;
-    }
-    Model.find(options.make, function (err, models) {
+var findQuery = function (vform, done) {
+    vform.find(function (err, data) {
         if (err) {
-            return console.error(err);
+            return done(err);
         }
-        var html = '<option value="">Any Model</option>';
-        var i;
-        var model;
-        for (i = 0; i < models.length; i++) {
-            model = models[i];
-            html += '<option value="' + model.id + '">' + model.title + '</option>';
-        }
-        var select = $('select', el).html(html).val(options.model || '');
-        form.selectize(select).on('change', function (val) {
-            options.model = val;
-            search(options);
+        vform.validate(data, function (err, errors, data) {
+            if (err) {
+                return done(err);
+            }
+            if (errors) {
+                return vform.update(errors, data, done);
+            }
+            done(null, data);
         });
     });
+};
+
+var findModels = function (make, done) {
+    if (!make) {
+        return done(null, []);
+    }
+    Model.find(make, function (err, models) {
+        if (err) {
+            return done(err);
+        }
+        done(null, models);
+    });
+};
+
+var configs = {
+    type: {
+        find: function (context, source, done) {
+            serand.blocks('select', 'find', source, done);
+        },
+        render: function (ctx, vform, data, value, done) {
+            var el = $('.type', vform.elem);
+            serand.blocks('select', 'create', el, {
+                value: value,
+                change: function () {
+                    findQuery(vform, function (err, query) {
+                        if (err) {
+                            return console.error(err);
+                        }
+                        serand.direct('/vehicles' + toQuery(query));
+                    });
+                }
+            }, done);
+        }
+    },
+    make: {
+        find: function (context, source, done) {
+            serand.blocks('select', 'find', source, done);
+        },
+        update: function (context, source, error, value, done) {
+            serand.blocks('select', 'update', source, {
+                value: value
+            }, done);
+        },
+        render: function (ctx, vform, data, value, done) {
+            var el = $('.make', vform.elem);
+            serand.blocks('select', 'create', el, {
+                value: value,
+                change: function () {
+                    serand.blocks('select', 'update', $('.model', vform.elem), {
+                        value: ''
+                    }, function (err) {
+                        if (err) {
+                            return done(err);
+                        }
+                        findQuery(vform, function (err, query) {
+                            if (err) {
+                                return console.error(err);
+                            }
+                            serand.direct('/vehicles' + toQuery(query));
+                        });
+                    });
+                }
+            }, done);
+        }
+    },
+    model: {
+        find: function (context, source, done) {
+            serand.blocks('select', 'find', source, done);
+        },
+        render: function (ctx, vform, data, value, done) {
+            var el = $('.model', vform.elem);
+            serand.blocks('select', 'create', el, {
+                value: value,
+                change: function () {
+                    findQuery(vform, function (err, query) {
+                        if (err) {
+                            return console.error(err);
+                        }
+                        serand.direct('/vehicles' + toQuery(query));
+                    });
+                }
+            }, done);
+        }
+    },
+    manufacturedAt: {
+        find: function (context, source, done) {
+            serand.blocks('select', 'find', source, done);
+        },
+        render: function (ctx, vform, data, value, done) {
+            var el = $('.manufacturedAt', vform.elem);
+            serand.blocks('select', 'create', el, {
+                value: value ? moment(value).year() : ''
+            }, done);
+        }
+    },
+    condition: {
+        find: function (context, source, done) {
+            serand.blocks('radios', 'find', source, done);
+        },
+        render: function (ctx, vform, data, value, done) {
+            var el = $('.condition', vform.elem);
+            serand.blocks('radios', 'create', el, {
+                value: value,
+                change: function () {
+                    findQuery(vform, function (err, query) {
+                        if (err) {
+                            return console.error(err);
+                        }
+                        serand.direct('/vehicles' + toQuery(query));
+                    });
+                }
+            }, done);
+        }
+    },
+    transmission: {
+        find: function (context, source, done) {
+            serand.blocks('radios', 'find', source, done);
+        },
+        render: function (ctx, vform, data, value, done) {
+            var el = $('.transmission', vform.elem);
+            serand.blocks('radios', 'create', el, {
+                value: value,
+                change: function () {
+                    findQuery(vform, function (err, query) {
+                        if (err) {
+                            return console.error(err);
+                        }
+                        serand.direct('/vehicles' + toQuery(query));
+                    });
+                }
+            }, done);
+        }
+    },
+    fuel: {
+        find: function (context, source, done) {
+            serand.blocks('radios', 'find', source, done);
+        },
+        render: function (ctx, vform, data, value, done) {
+            var el = $('.fuel', vform.elem);
+            serand.blocks('radios', 'create', el, {
+                value: value,
+                change: function () {
+                    findQuery(vform, function (err, query) {
+                        if (err) {
+                            return console.error(err);
+                        }
+                        serand.direct('/vehicles' + toQuery(query));
+                    });
+                }
+            }, done);
+        }
+    },
+    color: {
+        find: function (context, source, done) {
+            done(null, $('input', source).val());
+        },
+        update: function (context, source, error, value, done) {
+            $('input', source).val(value);
+            done();
+        }
+    },
+    mileage: {
+        find: function (context, source, done) {
+            done(null, $('input', source).val());
+        },
+        update: function (context, source, error, value, done) {
+            $('input', source).val(value);
+            done();
+        }
+    },
+    'price-gte': {
+        find: function (context, source, done) {
+            serand.blocks('text', 'find', source, function (err, value) {
+                if (err) {
+                    return done(err);
+                }
+                done(null, parseInt(value, 10) || null)
+            });
+        },
+        render: function (ctx, vform, data, value, done) {
+            var el = $('.price-gte', vform.elem);
+            serand.blocks('text', 'create', el, {
+                value: value,
+                change: function () {
+                    findQuery(vform, function (err, query) {
+                        if (err) {
+                            return console.error(err);
+                        }
+                        serand.direct('/vehicles' + toQuery(query));
+                    });
+                }
+            }, done);
+        }
+    },
+    'price-lte': {
+        find: function (context, source, done) {
+            serand.blocks('text', 'find', source, function (err, value) {
+                if (err) {
+                    return done(err);
+                }
+                done(null, parseInt(value, 10) || null)
+            });
+        },
+        render: function (ctx, vform, data, value, done) {
+            var el = $('.price-lte', vform.elem);
+            serand.blocks('text', 'create', el, {
+                value: value,
+                change: function () {
+                    findQuery(vform, function (err, query) {
+                        if (err) {
+                            return console.error(err);
+                        }
+                        serand.direct('/vehicles' + toQuery(query));
+                    });
+                }
+            }, done);
+        }
+    },
+    'manufacturedAt-gte': {
+        find: function (context, source, done) {
+            serand.blocks('text', 'find', source, done);
+        },
+        render: function (ctx, vform, data, value, done) {
+            var el = $('.manufacturedAt-gte', vform.elem);
+            serand.blocks('text', 'create', el, {
+                value: value,
+                change: function () {
+                    findQuery(vform, function (err, query) {
+                        if (err) {
+                            return console.error(err);
+                        }
+                        serand.direct('/vehicles' + toQuery(query));
+                    });
+                }
+            }, done);
+        }
+    },
+    'manufacturedAt-lte': {
+        find: function (context, source, done) {
+            serand.blocks('text', 'find', source, done);
+        },
+        render: function (ctx, vform, data, value, done) {
+            var el = $('.manufacturedAt-lte', vform.elem);
+            serand.blocks('text', 'create', el, {
+                value: value,
+                change: function () {
+                    findQuery(vform, function (err, query) {
+                        if (err) {
+                            return console.error(err);
+                        }
+                        serand.direct('/vehicles' + toQuery(query));
+                    });
+                }
+            }, done);
+        }
+    }
 };
 
 module.exports = function (ctx, container, options, done) {
     var sandbox = container.sandbox;
     options = options || {};
-    var _ = options._ || (options._ = {});
     Make.find(function (err, makes) {
         if (err) {
             return done(err);
         }
-        _.makes = makes;
-        dust.render('vehicles-search', options, function (err, out) {
+
+        var makeData = [{label: 'All Makes', value: ''}];
+        makeData = makeData.concat(_.map(makes, function (make) {
+            return {
+                value: make.id,
+                label: make.title
+            };
+        }));
+
+        var query = _.cloneDeep(options.query) || {};
+
+        findModels(query.make, function (err, models) {
             if (err) {
                 return done(err);
             }
 
-            var elem = sandbox.append(out);
-            update(elem, options);
-            var select = $('.make', elem).find('select').val(options.make);
-            form.selectize(select).on('change', function (val) {
-                options.make = val;
-                options.model = null;
-                updateModels(elem, options);
-                search(options);
-            });
+            var modelData = [{label: 'All Models', value: ''}];
+            modelData = modelData.concat(_.map(models, function (model) {
+                return {
+                    value: model.id,
+                    label: model.title
+                };
+            }));
 
-            updateModels(elem, options);
+            var manufacturedAt = [{label: 'All Years', value: ''}];
+            var year = moment().year();
+            var start = year - 100;
+            while (year > start) {
+                manufacturedAt.push({label: year, value: year});
+                year--;
+            }
 
-            $(elem).on('change', 'input', function () {
-                var index;
-                var input = $(this);
-                var checked = input.is(':checked');
-                var name = input.data('name');
-                var old = options[name];
-                var value = input.val();
+            query._ = {};
+            query._.makes = makeData;
+            query._.models = modelData;
+            query._.types = [
+                {label: 'All Types', value: ''},
+                {label: 'SUV', value: 'suv'},
+                {label: 'Car', value: 'car'},
+                {label: 'Cab', value: 'cab'},
+                {label: 'Bus', value: 'bus'},
+                {label: 'Lorry', value: 'lorry'},
+                {label: 'Backhoe', value: 'backhoe'},
+                {label: 'Motorcycle', value: 'motorcycle'},
+                {label: 'Threewheeler', value: 'threewheeler'},
+            ];
+            query._.manufacturedAt = manufacturedAt;
+            query._.conditions = [
+                {label: 'Brand New', value: 'brand-new'},
+                {label: 'Used', value: 'used'},
+                {label: 'Unregistered', value: 'unregistered'}
+            ];
+            query._.transmissions = [
+                {label: 'Automatic', value: 'automatic'},
+                {label: 'Manual', value: 'manual'},
+                {label: 'Manumatic', value: 'manumatic'}
+            ];
+            query._.fuels = [
+                {label: 'None', value: 'none'},
+                {label: 'Petrol', value: 'petrol'},
+                {label: 'Diesel', value: 'diesel'},
+                {label: 'Hybrid', value: 'hybrid'},
+                {label: 'Electric', value: 'electric'}
+            ];
 
-                if (checked) {
-                    if (!old) {
-                        options[name] = value;
-                        return search(options);
-                    }
-                    if (!(old instanceof Array)) {
-                        old = [old];
-                        options[name] = old;
-                    }
-                    index = old.indexOf(value);
-                    if (index !== -1) {
-                        return search(options);
-                    }
-                    old.push(value);
-                    return search(options);
+            dust.render('vehicles-search', query, function (err, out) {
+                if (err) {
+                    return done(err);
                 }
-                if (old instanceof Array) {
-                    index = old.indexOf(value);
-                    if (index === -1) {
-                        return search(options);
-                    }
-                    old.splice(index, 1);
-                    return search(options);
-                }
-                options[name] = null;
-                search(options);
-            });
 
-            done(null, function () {
-                $('.vehicles-search', sandbox).remove();
+                var elem = sandbox.append(out);
+                var vform = form.create(elem, configs);
+                vform.render(ctx, from(query), function (err) {
+                    if (err) {
+                        return done(err);
+                    }
+                    done(null, function () {
+                        $('.vehicles-search', sandbox).remove();
+                    });
+                });
             });
         });
     });
