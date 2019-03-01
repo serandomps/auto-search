@@ -360,7 +360,9 @@ module.exports = function (ctx, container, options, done) {
                 year--;
             }
 
-            query._ = {};
+            query._ = {
+                container: container.id
+            };
             query._.makes = makeData;
             query._.models = modelData;
             query._.types = [
@@ -399,7 +401,7 @@ module.exports = function (ctx, container, options, done) {
                 }
 
                 var elem = sandbox.append(out);
-                var vform = form.create(elem, configs);
+                var vform = form.create(container.id, elem, configs);
                 vform.render(ctx, from(query), function (err) {
                     if (err) {
                         return done(err);

@@ -3,22 +3,22 @@
         <div class="card-header" role="tab">Search</div>
         <div class="card-body">
             <form>
-                {@blocks block="select" id=id name="type" label="Type" value=type options=_.types/}
-                {@blocks block="select" id=id name="make" label="Make" value=make options=_.makes/}
-                {@blocks block="select" id=id name="model" label="Model" value=model options=_.models/}
+                {@blocks block="select" id=_.container name="type" label="Type" value=type options=_.types/}
+                {@blocks block="select" id=_.container name="make" label="Make" value=make options=_.makes/}
+                {@blocks block="select" id=_.container name="model" label="Model" value=model options=_.models/}
                 <div class="form-group price">
                     <label>Price</label>
-                    {@blocks block="text" id=id name="price-gte" help="Min"/}
-                    {@blocks block="text" id=id name="price-lte" help="Max"/}
+                    {@blocks block="text" id=_.container name="price-gte" help="Min"/}
+                    {@blocks block="text" id=_.container name="price-lte" help="Max"/}
                 </div>
                 <div class="form-group year">
                     <label>Year</label>
-                    {@blocks block="text" id=id name="manufacturedAt-gte" help="From" value=query/}
-                    {@blocks block="text" id=id name="manufacturedAt-lte" help="To" value=query/}
+                    {@blocks block="text" id=_.container name="manufacturedAt-gte" help="From" value=query/}
+                    {@blocks block="text" id=_.container name="manufacturedAt-lte" help="To" value=query/}
                 </div>
-                {@blocks block="checkboxes" id=id name="condition" value=condition options=_.conditions label="Condition"/}
-                {@blocks block="checkboxes" id=id name="transmission" value=transmission options=_.transmissions label="Transmission"/}
-                {@blocks block="checkboxes" id=id name="fuel" value=fuel options=_.fuels label="Fuel"/}
+                {@blocks block="checkboxes" id=_.container name="condition" value=condition options=_.conditions label="Condition"/}
+                {@blocks block="checkboxes" id=_.container name="transmission" value=transmission options=_.transmissions label="Transmission"/}
+                {@blocks block="checkboxes" id=_.container name="fuel" value=fuel options=_.fuels label="Fuel"/}
             </form>
         </div>
     </div>
