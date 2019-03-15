@@ -91,7 +91,7 @@ var configs = {
                         if (err) {
                             return console.error(err);
                         }
-                        serand.direct('/vehicles' + toQuery(query));
+                        serand.redirect('/vehicles' + toQuery(query));
                     });
                 }
             }, done);
@@ -121,7 +121,7 @@ var configs = {
                             if (err) {
                                 return console.error(err);
                             }
-                            serand.direct('/vehicles' + toQuery(query));
+                            serand.redirect('/vehicles' + toQuery(query));
                         });
                     });
                 }
@@ -141,7 +141,7 @@ var configs = {
                         if (err) {
                             return console.error(err);
                         }
-                        serand.direct('/vehicles' + toQuery(query));
+                        serand.redirect('/vehicles' + toQuery(query));
                     });
                 }
             }, done);
@@ -158,6 +158,25 @@ var configs = {
             }, done);
         }
     },
+    color: {
+        find: function (context, source, done) {
+            serand.blocks('select', 'find', source, done);
+        },
+        render: function (ctx, vform, data, value, done) {
+            var el = $('.color', vform.elem);
+            serand.blocks('select', 'create', el, {
+                value: value,
+                change: function () {
+                    findQuery(vform, function (err, query) {
+                        if (err) {
+                            return console.error(err);
+                        }
+                        serand.redirect('/vehicles' + toQuery(query));
+                    });
+                }
+            }, done);
+        }
+    },
     condition: {
         find: function (context, source, done) {
             serand.blocks('radios', 'find', source, done);
@@ -171,7 +190,7 @@ var configs = {
                         if (err) {
                             return console.error(err);
                         }
-                        serand.direct('/vehicles' + toQuery(query));
+                        serand.redirect('/vehicles' + toQuery(query));
                     });
                 }
             }, done);
@@ -190,7 +209,7 @@ var configs = {
                         if (err) {
                             return console.error(err);
                         }
-                        serand.direct('/vehicles' + toQuery(query));
+                        serand.redirect('/vehicles' + toQuery(query));
                     });
                 }
             }, done);
@@ -209,19 +228,10 @@ var configs = {
                         if (err) {
                             return console.error(err);
                         }
-                        serand.direct('/vehicles' + toQuery(query));
+                        serand.redirect('/vehicles' + toQuery(query));
                     });
                 }
             }, done);
-        }
-    },
-    color: {
-        find: function (context, source, done) {
-            done(null, $('input', source).val());
-        },
-        update: function (context, source, error, value, done) {
-            $('input', source).val(value);
-            done();
         }
     },
     mileage: {
@@ -251,7 +261,7 @@ var configs = {
                         if (err) {
                             return console.error(err);
                         }
-                        serand.direct('/vehicles' + toQuery(query));
+                        serand.redirect('/vehicles' + toQuery(query));
                     });
                 }
             }, done);
@@ -275,7 +285,7 @@ var configs = {
                         if (err) {
                             return console.error(err);
                         }
-                        serand.direct('/vehicles' + toQuery(query));
+                        serand.redirect('/vehicles' + toQuery(query));
                     });
                 }
             }, done);
@@ -294,7 +304,7 @@ var configs = {
                         if (err) {
                             return console.error(err);
                         }
-                        serand.direct('/vehicles' + toQuery(query));
+                        serand.redirect('/vehicles' + toQuery(query));
                     });
                 }
             }, done);
@@ -313,7 +323,7 @@ var configs = {
                         if (err) {
                             return console.error(err);
                         }
-                        serand.direct('/vehicles' + toQuery(query));
+                        serand.redirect('/vehicles' + toQuery(query));
                     });
                 }
             }, done);
@@ -393,6 +403,18 @@ module.exports = function (ctx, container, options, done) {
                 {label: 'Diesel', value: 'diesel'},
                 {label: 'Hybrid', value: 'hybrid'},
                 {label: 'Electric', value: 'electric'}
+            ];
+            query._.colors = [
+                {label: 'All Colors', value: ''},
+                {label: 'Black', value: 'black'},
+                {label: 'Blue', value: 'blue'},
+                {label: 'Brown', value: 'brown'},
+                {label: 'Green', value: 'green'},
+                {label: 'Orange', value: 'orange'},
+                {label: 'Red', value: 'red'},
+                {label: 'Silver', value: 'silver'},
+                {label: 'White', value: 'white'},
+                {label: 'Yellow', value: 'yellow'}
             ];
 
             dust.render('vehicles-search', query, function (err, out) {
