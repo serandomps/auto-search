@@ -154,7 +154,7 @@ var configs = {
         render: function (ctx, vform, data, value, done) {
             var el = $('.manufacturedAt', vform.elem);
             serand.blocks('select', 'create', el, {
-                value: value ? moment(value).year() : ''
+                value: value ? moment(value).year() : null
             }, done);
         }
     },
