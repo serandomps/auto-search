@@ -9,8 +9,8 @@
                 {@blocks block="select" id=_.container name="color" label="Color" value=color options=_.colors/}
                 <div class="form-group year">
                     <label>Year</label>
-                    {@blocks block="text" id=_.container name="manufacturedAt-gte" help="From" value=query/}
-                    {@blocks block="text" id=_.container name="manufacturedAt-lte" help="To" value=query/}
+                    {@blocks block="select" id=_.container name="manufacturedAt-gte" help="From" value=manufacturedAt-gte options=_.manufacturedFrom/}
+                    {@blocks block="select" id=_.container name="manufacturedAt-lte" help="To" value=manufacturedAt-lte options=_.manufacturedTo/}
                 </div>
                 <div class="form-group price">
                     <label>Price</label>

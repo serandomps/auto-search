@@ -147,17 +147,6 @@ var configs = {
             }, done);
         }
     },
-    manufacturedAt: {
-        find: function (context, source, done) {
-            serand.blocks('select', 'find', source, done);
-        },
-        render: function (ctx, vform, data, value, done) {
-            var el = $('.manufacturedAt', vform.elem);
-            serand.blocks('select', 'create', el, {
-                value: value ? moment(value).year() : null
-            }, done);
-        }
-    },
     color: {
         find: function (context, source, done) {
             serand.blocks('select', 'find', source, done);
@@ -293,11 +282,11 @@ var configs = {
     },
     'manufacturedAt-gte': {
         find: function (context, source, done) {
-            serand.blocks('text', 'find', source, done);
+            serand.blocks('select', 'find', source, done);
         },
         render: function (ctx, vform, data, value, done) {
             var el = $('.manufacturedAt-gte', vform.elem);
-            serand.blocks('text', 'create', el, {
+            serand.blocks('select', 'create', el, {
                 value: value,
                 change: function () {
                     findQuery(vform, function (err, query) {
@@ -312,11 +301,11 @@ var configs = {
     },
     'manufacturedAt-lte': {
         find: function (context, source, done) {
-            serand.blocks('text', 'find', source, done);
+            serand.blocks('select', 'find', source, done);
         },
         render: function (ctx, vform, data, value, done) {
             var el = $('.manufacturedAt-lte', vform.elem);
-            serand.blocks('text', 'create', el, {
+            serand.blocks('select', 'create', el, {
                 value: value,
                 change: function () {
                     findQuery(vform, function (err, query) {
@@ -362,7 +351,7 @@ module.exports = function (ctx, container, options, done) {
                 };
             }));
 
-            var manufacturedAt = [{label: 'All Years', value: ''}];
+            var manufacturedAt = [];
             var year = moment().year();
             var start = year - 100;
             while (year > start) {
@@ -386,7 +375,8 @@ module.exports = function (ctx, container, options, done) {
                 {label: 'Motorcycle', value: 'motorcycle'},
                 {label: 'Threewheeler', value: 'threewheeler'},
             ];
-            query._.manufacturedAt = manufacturedAt;
+            query._.manufacturedFrom = [{label: 'From Any Year', value: ''}].concat(manufacturedAt);
+            query._.manufacturedTo = [{label: 'To Any Year', value: ''}].concat(manufacturedAt);
             query._.conditions = [
                 {label: 'Brand New', value: 'brand-new'},
                 {label: 'Used', value: 'used'},
